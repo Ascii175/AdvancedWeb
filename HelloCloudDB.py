@@ -50,11 +50,11 @@ def get_staffs():
     all_staffs = Staffs.query.all()
     result = staffs_schema.dump(all_staffs)
     return jsonify(result)
-    
+
 # Web Root Hello
 @app.route('/', methods=['GET'])
 def get():
-    return jsonify({'ms': 'Hello Cloud DB1'})
+    return jsonify({'ms': 'Hello Cloud DB1 all staffs'})
 
 # Run Server
 if __name__ == "__main__":
