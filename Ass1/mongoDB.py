@@ -17,7 +17,6 @@ db = client["Ass1"]
 def index(): 
     texts = "Hello World"
     return texts
-
 #getAll
 @app.route("/Car", methods=['GET'])
 def get_allCar():
