@@ -48,12 +48,20 @@ def get_Join():
                 '$lookup':  {
                         'from' : 'Car',
                         'localField': 'carid',
-                        'foreignField':'carid' ,
-                        'as': 'Join'
+                        'foreignField':'custumerid' ,
+                        'as': 'Car'
                 }
-            }   
+             }
+          #   ,           
+                #  {'$unwind':'$Car'},             
+                #      {'$project':{
+                #                    'namecustomer':1,
+                #                    '_name':1,                                                                     
+                #                  }           
+                #      }  
         ]  
     )  
+    
     return json_util.dumps(pipel)
 
 #ดูข้อมูลแบบทีละหัวข้อโดยใช้ชื่อของข้อมูล
