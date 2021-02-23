@@ -5,10 +5,12 @@
 import pymongo
 from flask import Flask,jsonify,render_template,request
 from flask_pymongo import PyMongo
+from bson import json_util
 
 app = Flask(__name__)
-client = pymongo.MongoClient("mongodb://admin:EAAbhq41614@10.100.2.120:27017")  #ใส่username and passwd IP ของโหนด MongoDB
-db = client["Ass1"]  #ชิ่อของDatabase
+client = pymongo.MongoClient("mongodb://admin:EAAbhq41614@10.100.2.120:27017")
+#client = pymongo.MongoClient("mongodb://admin:EAAbhq41614@node9143-advweb-05.app.ruk-com.cloud:11152")
+db = client["Ass1"] 
 
 
 @app.route("/") #เช็คว่า Conect ได้หรือป่าว
@@ -16,21 +18,49 @@ def index():
     texts = "Hello World"
     return texts
 
-#ดูข้อมูลใน Database ทั้งหมด
+#getAll
 @app.route("/Car", methods=['GET'])
 def get_allCar():
-    char = db.Car #เป็นเหมือนการนำค่าชื่อหัวตารางมาใส่ในตัวแปร char
+    char = db.Car
+    Customer = db.Customer
     output = []
-    for x in char.find(): #ทำตามฟังชั่น
-        output.append({'_name' : x['_name'],'_model' : x['_model'],
-                        '_price' : x['_price']}) #เอาค่าในตารางมาอ่านแล้วใส่ไปใน output เป็นเหมือนค่าอาเร
-    return jsonify(output) #หลังจากทำเงื่อนไขเสร็จส่งค่ากลับไปที่ output
+    outputC = []
+    for x in char.find(): 
+        output.append({'_id':x['_id'],
+                        '_name' : x['_name'],
+                        '_model' : x['_model'],
+                        '_price' : x['_price']}) 
+        for x in Customer.find(): 
+            outputC.append({'_id':x['_id'],
+                            'namecustomer' : x['namecustomer'],
+                            'age' : x['age'],
+                            'Tel' : x['Tel']}) 
+    return jsonify(output,outputC) 
+
+
+
+#GetJ
+@app.route("/test", methods=['GET'])
+def get_Join():
+    Customer = db.Customer
+    pipel = Customer.aggregate( [     
+            {
+                '$lookup':  {
+                        'from' : 'Car',
+                        'localField': 'carid',
+                        'foreignField':'carid' ,
+                        'as': 'Join'
+                }
+            }   
+        ]  
+    )  
+    return json_util.dumps(pipel)
 
 #ดูข้อมูลแบบทีละหัวข้อโดยใช้ชื่อของข้อมูล
 @app.route("/Car/<name>", methods=['GET'])
 def get_oneCar(name):
-    char = db.Car #เป็นเหมือนการนำค่าชื่อหัวตารางมาใส่ในตัวแปร char
-    x = char.find_one({'_name' : name}) #ชื่อข้อมูลที่จะหามาใส่ค่า name
+    char = db.Car 
+    x = char.find_one({'_name' : name}) 
     if x:
         output = ({'_name' : x['_name'],'_model' : x['_model'],
                     '_price' : x['_price']})  #เอาค่าในตารางมาอ่านแล้วใส่ไปใน output เป็นเหมือนค่าอาเร
@@ -88,7 +118,7 @@ def Car_delete(name):
 
     output = "Deleted complete" # หลังจากลบเสร็จแสดงข้อความ
 
-    return jsonify(output) #หลังจากทำเงื่อนไขเสร็จส่งค่ากลับไปที่ output
+    return jsonify(output) 
 
 #ตัว Run server
 if __name__ == "__main__":
