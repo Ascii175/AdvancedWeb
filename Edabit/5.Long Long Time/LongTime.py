@@ -8,4 +8,7 @@ def longest_time(h, m, s):
 # h = int(input("Hours : "))
 # m = int(input("minustes : "))
 # s = int(input("seconds : "))
-# print(longest_time(h, m, s))
+h = 1
+m = 59
+s = 3598
+print(longest_time(h, m, s))

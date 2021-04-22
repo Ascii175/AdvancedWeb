@@ -7,7 +7,7 @@ def make_rug(m, n, *s):
 # m = int(input("m : "))
 # n = int(input("n : "))
 # s = input("s : ")
-# m = 3
-# n = 2
-# s = ''
-# print(make_rug(m, n, *s))
+m = 3
+n = 2
+s = 'A'
+print(make_rug(m, n, *s))
